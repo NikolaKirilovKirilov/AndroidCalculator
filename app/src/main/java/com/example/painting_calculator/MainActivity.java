@@ -2,6 +2,7 @@ package com.example.painting_calculator;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -22,11 +23,9 @@ public class MainActivity extends AppCompatActivity {
     private static final char MULTIPLICATION = '*';
     private static final char DIVISION = '/';
     private static final char PERCENT = '%';
-
     private char currentSymbol;
-
     private float firstValue = Float.NaN;
-    private float secondValue;
+    private float secondValue = Float.NaN;
     private TextView inputDisplay, outputDisplay;
     private DecimalFormat decimalFormat;
     private MaterialButton button0, button1, button2, button3, button4, button5, button6, button7, button8, button9,
@@ -41,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
 
         inputDisplay = findViewById(R.id.input);
         outputDisplay = findViewById(R.id.output);
+
+        Bundle bundle = new Bundle();
 
         button0 = findViewById(R.id.btn0);
         button1 = findViewById(R.id.btn1);
@@ -226,14 +227,19 @@ public class MainActivity extends AppCompatActivity {
         buttonPaint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DisplayMetrics metrics = new DisplayMetrics();
-                int x = metrics.widthPixels/2;
-                int y = metrics.heightPixels/2;
+                Intent drwActivity = new Intent(MainActivity.this, DrwActivity.class);
 
-                Paint paint = new Paint();
-                Canvas canvas = new Canvas();
+                firstValue = Float.parseFloat(inputDisplay.getText().toString());
+                if(!Double.isNaN(firstValue))
+                    bundle.putFloat("firstValue", firstValue);
 
-                canvas.drawOval(x, y, firstValue, secondValue, paint);
+
+                secondValue = Float.parseFloat(outputDisplay.getText().toString().replaceAll("[^\\d.]", ""));
+                if(!Double.isNaN(secondValue))
+                    bundle.putFloat("secondValue", secondValue);
+
+                drwActivity.putExtras(bundle);
+                startActivity(drwActivity);
             }
         });
     }
@@ -256,8 +262,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             try {
                 firstValue = Float.parseFloat(inputDisplay.getText().toString());
-            } catch (Exception e) {
-
+                } catch (Exception e) {
             }
         }
     }
